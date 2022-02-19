@@ -1,0 +1,45 @@
+Initialize Nuscenes dataloader
+Load ('train_day',)
+Length: 24745
+Image Sizes:
+	(3, 900, 1600): 24745
+Total Points: 68165982
+Average Points: 2754.737603556274
+Class Counts: [5.37324321e-02 3.40967728e-03 5.02655415e-04 7.39585913e-03
+ 9.34959376e-01]
+Initialize Nuscenes dataloader
+Load ('test_day',)
+Length: 5417
+Image Sizes:
+	(3, 900, 1600): 5417
+Total Points: 15015292
+Average Points: 2771.8833302565995
+Class Counts: [6.12308439e-02 2.88132925e-03 5.35121129e-04 6.93080095e-03
+ 9.28421905e-01]
+Initialize Nuscenes dataloader
+Load ('train_night',)
+Length: 2779
+Image Sizes:
+	(3, 900, 1600): 2779
+Total Points: 8498393
+Average Points: 3058.0759265922993
+Class Counts: [3.22983416e-02 2.57742846e-03 3.99604961e-04 1.08844107e-04
+ 9.64615781e-01]
+Initialize Nuscenes dataloader
+Load ('test_night',)
+Length: 602
+Image Sizes:
+	(3, 900, 1600): 602
+Total Points: 1869793
+Average Points: 3105.968438538206
+Class Counts: [3.93551586e-02 1.38518007e-04 5.70116585e-04 8.53035603e-04
+ 9.59083171e-01]
+Initialize Nuscenes dataloader
+Load ('val_night',)
+Length: 606
+Image Sizes:
+	(3, 900, 1600): 606
+Total Points: 1727174
+Average Points: 2850.122112211221
+Class Counts: [6.49801352e-02 2.98174938e-04 2.68067954e-04 7.16777812e-04
+ 9.33736844e-01]

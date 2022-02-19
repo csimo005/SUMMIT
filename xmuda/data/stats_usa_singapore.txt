@@ -1,0 +1,45 @@
+Initialize Nuscenes dataloader
+Load ('train_usa',)
+Length: 15695
+Image Sizes:
+	(3, 900, 1600): 15695
+Total Points: 39757468
+Average Points: 2533.129531697993
+Class Counts: [7.14538713e-02 3.83930385e-03 3.32943738e-04 7.60566543e-03
+ 9.16768216e-01]
+Initialize Nuscenes dataloader
+Load ('test_usa',)
+Length: 3090
+Image Sizes:
+	(3, 900, 1600): 3090
+Total Points: 7799290
+Average Points: 2524.042071197411
+Class Counts: [8.71048519e-02 2.05352026e-03 1.64886804e-04 8.91735017e-03
+ 9.01759391e-01]
+Initialize Nuscenes dataloader
+Load ('train_singapore',)
+Length: 9665
+Image Sizes:
+	(3, 900, 1600): 9665
+Total Points: 30152220
+Average Points: 3119.733057423694
+Class Counts: [3.00955618e-02 2.45305321e-03 6.75273661e-04 2.95540428e-03
+ 9.63820707e-01]
+Initialize Nuscenes dataloader
+Load ('test_singapore',)
+Length: 2929
+Image Sizes:
+	(3, 900, 1600): 2929
+Total Points: 9085795
+Average Points: 3102.0126322977126
+Class Counts: [3.45186084e-02 3.02747310e-03 8.60133868e-04 3.97477601e-03
+ 9.57619009e-01]
+Initialize Nuscenes dataloader
+Load ('val_singapore',)
+Length: 2770
+Image Sizes:
+	(3, 900, 1600): 2770
+Total Points: 8481861
+Average Points: 3062.043682310469
+Class Counts: [3.55071841e-02 3.32910431e-03 5.33491412e-04 1.35365340e-02
+ 9.47093686e-01]
