@@ -118,7 +118,7 @@ def diversity(probs):
     # (1, num_points, num_classes)
     assert probs.dim() == 3
 
-    return entropy(torchy.mean(probs, (0, 1), True))
+    return -entropy(torch.mean(probs, (0, 1), True))
 
 def weighted_diversity(probs, lmbda=3):
     """
@@ -134,6 +134,6 @@ def weighted_diversity(probs, lmbda=3):
 
     h = entropy(probs, normalize=True, reduction='none')
     
-    weights = torch.exp(-lmbda * h)
+    weights = torch.exp(-lmbda * torch.unsqueeze(h, 2))
     mprobs = torch.sum(weights * probs, (0, 1), True) / torch.sum(weights)
-    return entropy(mprobs, normalize=True)
+    return -entropy(mprobs, normalize=True)
