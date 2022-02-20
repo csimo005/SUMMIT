@@ -66,22 +66,24 @@ def logcoral_loss(x_src, x_trg):
     # Frobenius norm
     return torch.mean((log_cov_src - log_cov_trg) ** 2)
 
-def entropy(probs):
-    """
-        Information Maximization Loss for probabilistic prediction vectors
-        input: batch_size x classes x points
-        output: Scalar Loss 
-    """
-    # (num_points, num_classes)
+def entropy(probs, normalize=False, reduction='mean'):
     if probs.dim() == 2:
         probs = probs.unsqueeze(0)
-    # (1, num_points, num_classes)
     assert probs.dim() == 3
+    assert reduction in ['none', 'mean', 'sum']
 
-    entropy = -torch.sum(torch.mul(probs, torch.log(probs + 1e-30))) / (probs.shape[0] * probs.shape[1])
+    entropy = -torch.sum(probs * torch.log(probs + 1e-30), 2)
+    if normalize: #Entropy normalized by log of number of classes, aka efficiancy
+        entropy = entropy / torch.log(torch.tensor(probs.shape[2]))
+
+    if reduction == 'mean':
+        entropy = torch.mean(entropy)
+    elif reduction == 'sum':
+        entropy = torch.sum(entropy)
+
     return entropy
 
-def curriculum_entropy(probs, alpha=0.002, gamma=3):
+def curriculum_entropy(probs, alpha=0.002, gamma=3, reduction='mean'):
     """
         Information Maximization Loss for probabilistic prediction vectors
         input: batch_size x classes x points
@@ -92,12 +94,18 @@ def curriculum_entropy(probs, alpha=0.002, gamma=3):
         probs = probs.unsqueeze(0)
     # (1, num_points, num_classes)
     assert probs.dim() == 3
+    assert reduction in ['none', 'mean', 'sum']
 
-    entropy = -torch.sum(torch.mul(probs, torch.log(probs + 1e-30)), dim=(2,))
-    curriculum_entropy = alpha * (1-entropy) ** gamma + entropy
+    h = entropy(probs, normalize=True, reduction='none')
+    h = alpha * (1-h) ** gamma * h 
+     
+    if reduction == 'mean':
+        h = torch.mean(h)
+    elif reduction == 'sum':
+        h = torch.sum(h)
+
+    return h 
     
-    return torch.mean(curriculum_entropy)
-
 def diversity(probs):
     """
         Information Maximization Loss for probabilistic prediction vectors
@@ -110,9 +118,7 @@ def diversity(probs):
     # (1, num_points, num_classes)
     assert probs.dim() == 3
 
-    mprobs = torch.mean(probs, dim=(0, 1))
-    diversity = -torch.sum(torch.mul(mprobs, torch.log(mprobs + 1e-30)))
-    return diversity
+    return entropy(torchy.mean(probs, (0, 1), True))
 
 def weighted_diversity(probs, lmbda=3):
     """
@@ -126,7 +132,8 @@ def weighted_diversity(probs, lmbda=3):
     # (1, num_points, num_classes)
     assert probs.dim() == 3
 
-    weights = torch.exp(lmbda * torch.unsqueeze(torch.torch.sum(torch.mul(probs, torch.log(probs + 1e-30)), dim=(2,)), 2))
-    weighted_probs = torch.sum(weights * probs, dim=(0, 1)) / torch.sum(weights)
-    diversity = -torch.sum(torch.mul(weighted_probs, torch.log(weighted_probs + 1e-30)))
-    return diversity
+    h = entropy(probs, normalize=True, reduction='none')
+    
+    weights = torch.exp(-lmbda * h)
+    mprobs = torch.sum(weights * probs, (0, 1), True) / torch.sum(weights)
+    return entropy(mprobs, normalize=True)

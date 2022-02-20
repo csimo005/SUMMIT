@@ -1,0 +1,50 @@
+MODEL_2D:
+  TYPE: "UNetResNet34"
+  DUAL_HEAD: True
+MODEL_3D:
+  TYPE: "SCN"
+  DUAL_HEAD: True
+DATASET_SOURCE:
+  TYPE: "NuScenesSCN"
+  TRAIN: ("train_usa",)
+  TEST: ("test_usa",)
+  NuScenesSCN:
+    preprocess_dir: "/data/AmitRoyChowdhury/xmuda/nuscenes/preprocess"
+    nuscenes_dir: "/data/AmitRoyChowdhury/nuscenes"  # only front cam images are needed
+DATASET_TARGET:
+  TYPE: "NuScenesSCN"
+  TRAIN: ("train_singapore",)
+  VAL: ("val_singapore",)
+  TEST: ("test_singapore",)
+  NuScenesSCN:
+    preprocess_dir: "/data/AmitRoyChowdhury/xmuda/nuscenes/preprocess"
+    nuscenes_dir: "/data/AmitRoyChowdhury/nuscenes"  # only front cam images are needed
+    pselab_paths: ("/home/eegrad/csimons/Projects/xmuda/eval_result/nuscenes/usa_singapore/baseline/pselab_data/train_singapore.npy",)
+DATALOADER:
+  NUM_WORKERS: 4
+OPTIMIZER:
+  TYPE: "Adam"
+  BASE_LR: 0.00001
+SCHEDULER:
+  TYPE: "MultiStepLR"
+  MultiStepLR:
+    gamma: 0.1
+    milestones: (80000, 90000)
+  MAX_ITERATION: 100000
+TRAIN:
+  BATCH_SIZE: 8
+  SUMMARY_PERIOD: 50
+  CHECKPOINT_PERIOD: 5000
+#  CLASS_WEIGHTS: [2.47956584, 4.26788384, 5.71114131, 3.80241668, 1.] # Calculated on source, not source free
+  CLASS_WEIGHTS: [2.94507397, 4.21026124, 5.43160993, 3.95353505, 1.]
+  XMUDA:
+    lambda_curr_ent: 1.0
+    lambda_weight_div: 0.1
+    lambda_pl: 1.0
+    pseudo_label_period: 0
+    ckpt_2d: '/home/eegrad/csimons/Projects/xmuda/output/73301/nuscenes/usa_singapore/baseline/model_2d_100000.pth'
+    ckpt_3d: '/home/eegrad/csimons/Projects/xmuda/output/73301/nuscenes/usa_singapore/baseline/model_3d_100000.pth'
+VAL:
+  BATCH_SIZE: 32
+  PERIOD: 5000
+OUTPUT_DIR: "eval_result/@"  #  @ will be replaced with config path, e.g. nuscenes/usa_singapore/xmuda

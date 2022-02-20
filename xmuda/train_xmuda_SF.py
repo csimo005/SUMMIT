@@ -19,7 +19,7 @@ from xmuda.common.utils.torch_util import set_random_seed
 from xmuda.models.build import build_model_2d, build_model_3d
 from xmuda.data.build import build_dataloader
 from xmuda.data.utils.validate import validate
-from xmuda.models.losses import entropy_loss
+from xmuda.models.losses import entropy_loss, entropy, diversity, curriculum_entropy, weighted_diversity
 
 def parse_args():
     parser = argparse.ArgumentParser(description='xMUDA training')
@@ -232,17 +232,41 @@ def train(cfg, output_dir='', run_name=''):
         loss_2d = []
         loss_3d = []
 
-        if cfg.TRAIN.XMUDA.lambda_seg > 0:
-            seg_loss_trg_2d = F.cross_entropy(preds_2d['seg_logit'], data_batch_trg['seg_label'], weight=class_weights)
-            seg_loss_trg_3d = F.cross_entropy(preds_3d['seg_logit'], data_batch_trg['seg_label'], weight=class_weights)
-            train_metric_logger.update(seg_loss_trg_2d=seg_loss_trg_2d,
-                                       seg_loss_trg_3d=seg_loss_trg_3d)
-            loss_2d.append(cfg.TRAIN.XMUDA.lambda_seg * seg_loss_trg_2d)
-            loss_3d.append(cfg.TRAIN.XMUDA.lambda_seg * seg_loss_trg_3d)
+        if cfg.TRAIN.XMUDA.lambda_ent > 0:
+            ent_loss_2d = entropy(F.softmax(preds_2d['seg_logit'], dim=1))
+            ent_loss_3d = entropy(F.softmax(preds_3d['seg_logit'], dim=1))
 
-            with torch.no_grad():
-                train_metric_2d.update_dict(preds_2d, data_batch_trg)
-                train_metric_3d.update_dict(preds_3d, data_batch_trg)
+            train_metric_logger.update(ent_loss_trg_2d=ent_loss_trg_2d,
+                                       ent_loss_trg_3d=ent_loss_trg_3d)
+            loss_2d.append(cfg.TRAIN.XMUDA.lambda_ent * ent_loss_2d)
+            loss_3d.append(cfg.TRAIN.XMUDA.lambda_ent * ent_loss_3d)
+        
+        if cfg.TRAIN.XMUDA.lambda_div > 0:
+            div_loss_2d = diversity(F.softmax(preds_2d['seg_logit'], dim=1))
+            div_loss_3d = diversity(F.softmax(preds_3d['seg_logit'], dim=1))
+
+            train_metric_logger.update(div_loss_trg_2d=div_loss_trg_2d,
+                                       div_loss_trg_3d=div_loss_trg_3d)
+            loss_2d.append(cfg.TRAIN.XMUDA.lambda_div * div_loss_2d)
+            loss_3d.append(cfg.TRAIN.XMUDA.lambda_div * div_loss_3d)
+        
+        if cfg.TRAIN.XMUDA.lambda_curr_ent > 0:
+            curr_ent_loss_2d = curriculum_entropy(F.softmax(preds_2d['seg_logit'], dim=1))
+            curr_ent_loss_3d = curriculum_entropy(F.softmax(preds_3d['seg_logit'], dim=1))
+
+            train_metric_logger.update(curr_ent_loss_trg_2d=curr_ent_loss_trg_2d,
+                                       curr_ent_loss_trg_3d=curr_ent_loss_trg_3d)
+            loss_2d.append(cfg.TRAIN.XMUDA.lambda_curr_ent * curr_ent_loss_2d)
+            loss_3d.append(cfg.TRAIN.XMUDA.lambda_curr_ent * curr_ent_loss_3d)
+        
+        if cfg.TRAIN.XMUDA.lambda_weight_div > 0:
+            weight_div_loss_2d = weighted_diversity(F.softmax(preds_2d['seg_logit'], dim=1))
+            weight_div_loss_3d = weighted_diversity(F.softmax(preds_3d['seg_logit'], dim=1))
+
+            train_metric_logger.update(weight_div_loss_trg_2d=weight_div_loss_trg_2d,
+                                       weight_div_loss_trg_3d=weight_div_loss_trg_3d)
+            loss_2d.append(cfg.TRAIN.XMUDA.lambda_weight_div * weight_div_loss_2d)
+            loss_3d.append(cfg.TRAIN.XMUDA.lambda_weight_div * weight_div_loss_3d)
 
         if cfg.TRAIN.XMUDA.lambda_xm_trg > 0:
             # cross-modal loss: KL divergence

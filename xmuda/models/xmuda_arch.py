@@ -77,19 +77,15 @@ class Net2DSeg(nn.Module):
 
     def classify_features(self, features):
         return self.linear(features)
-
-    def nrc_parameters(self):
-        return self.net_2d.parameters()
-
-    def nrc_named_parameters(self):
-        return self.net_2d.named_parameters()
-
-    def train_nrc(self):
-        self.net_2d.train()
-        self.linear.eval()
-        self.linear2.eval()
-        
-
+    
+    def classifier_parameters(self, features):
+        if self.dual_head:
+            return list(*self.linear.parameters()) + list(*self.linear2.parameters())
+        else:
+            return self.linear.parameters()
+    
+    def feat_encoder_parameters(self, features):
+        return self.net_3d.parameters()
 
 class Net3DSeg(nn.Module):
     def __init__(self,
@@ -131,18 +127,15 @@ class Net3DSeg(nn.Module):
     def classify_features(self, features):
         return self.linear(features)
     
-    def nrc_parameters(self):
-        return self.net_3d.parameters()
-
-    def nrc_named_parameters(self):
-        return self.net_3d.named_parameters()
-
-    def train_nrc(self):
-        self.net_3d.train()
-        self.linear.eval()
-        self.linear2.eval()
+    def classifier_parameters(self, features):
+        if self.dual_head:
+            return list(*self.linear.parameters()) + list(*self.linear2.parameters())
+        else:
+            return self.linear.parameters()
     
-
+    def feat_encoder_parameters(self, features):
+        return self.backbone_3d.parameters()
+    
 def test_Net2DSeg():
     # 2D
     batch_size = 2

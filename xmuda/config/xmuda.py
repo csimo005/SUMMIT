@@ -25,6 +25,8 @@ _C.TRAIN.XMUDA.lambda_logcoral = 0.0
 
 _C.TRAIN.XMUDA.lambda_ent = 0.0
 _C.TRAIN.XMUDA.lambda_div = 0.0
+_C.TRAIN.XMUDA.lambda_curr_ent = 0.0
+_C.TRAIN.XMUDA.lambda_weight_div = 0.0
 _C.TRAIN.XMUDA.pseudo_label_period = 0
 
 _C.TRAIN.XMUDA.ckpt_2d = ''

@@ -45,6 +45,14 @@ _C.OPTIMIZER.TYPE = ''
 _C.OPTIMIZER.BASE_LR = 0.001
 _C.OPTIMIZER.WEIGHT_DECAY = 0.0
 
+# Each of these can be specified seperately, or if left unchanged will default the above value
+_C.OPTIMIZER.FEAT_ENCODER_LR = -1 
+_C.OPTIMIZER.FEAT_ENCODER_WEIGHT_DECAY = -1
+_C.OPTIMIZER.CLASSIFIER_LR = -1 
+_C.OPTIMIZER.CLASSIFIER_WEIGHT_DECAY = -1
+_C.OPTIMIZER.XMUDA_CLASSIFIER_LR = -1 
+_C.OPTIMIZER.XMUDA_CLASSIFIER_WEIGHT_DECAY = -1
+
 # Specific parameters of optimizers
 _C.OPTIMIZER.SGD = CN()
 _C.OPTIMIZER.SGD.momentum = 0.9
