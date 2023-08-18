@@ -33,7 +33,7 @@ class DummyDataset(Dataset):
             cam_paths = sorted(glob.glob(glob_path))
             # load calibration
             calib = self.read_calib(osp.join(self.root_dir, 'dataset', 'sequences', scene, 'calib.txt'))
-            proj_matrix = calib['P2'] @ self.random_transformation(0.02, 0.1) @ calib['Tr']
+            proj_matrix = calib['P2'] @ calib['Tr']
             proj_matrix = proj_matrix.astype(np.float32)
 
             for cam_path in cam_paths:
@@ -53,35 +53,6 @@ class DummyDataset(Dataset):
                         if not osp.exists(v):
                             raise IOError('File not found {}'.format(v))
                 self.data.append(data)
-
-    @staticmethod
-    def rotX(theta):
-        cT, sT = np.cos(theta), np.sin(theta)
-        return np.asarray([[1,  0,   0],
-                           [0, cT, -sT],
-                           [0, sT,  cT]])
-    
-    @staticmethod
-    def rotY(theta):
-        cT, sT = np.cos(theta), np.sin(theta)
-        return np.asarray([[ cT, 0, sT],
-                           [  0, 1,  0],
-                           [-sT, 0, cT]])
-    
-    @staticmethod
-    def rotZ(theta):
-        cT, sT = np.cos(theta), np.sin(theta)
-        return np.asarray([[cT, -sT, 0],
-                           [sT,  cT, 0],
-                           [ 0,   0, 1]])
-
-    def random_transformation(self, rotation, translation):
-        alpha, beta, gamma = nr.uniform(-rotation, rotation, size=(3,))
-        t_n = nr.uniform(-translation, translation, size=(3,))
-        T = np.eye(4)
-        T[:3, :3] = self.rotX(alpha)@self.rotY(beta)@self.rotZ(gamma)
-        T[:3, 3] = t_n
-        return T
 
     @staticmethod
     def read_calib(calib_path):

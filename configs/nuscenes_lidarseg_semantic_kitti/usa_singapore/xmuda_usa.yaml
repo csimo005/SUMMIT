@@ -1,0 +1,50 @@
+MODEL_2D:
+  TYPE: "UNetResNet34"
+  DUAL_HEAD: True
+  NUM_CLASSES: 10
+MODEL_3D:
+  TYPE: "SCN"
+  DUAL_HEAD: True
+  NUM_CLASSES: 10
+DATASET_SOURCE:
+  TYPE: "NuScenesLidarSegSCN"
+  TRAIN: ("train_day",)
+  TEST: ("test_day",)
+  NuScenesLidarSegSCN:
+    preprocess_dir: "/data/AmitRoyChowdhury/xmuda/nuscenes_lidarseg/preprocess"
+    nuscenes_dir: "/data/AmitRoyChowdhury/nuscenes"  # only front cam images are needed
+DATASET_TARGET:
+  TYPE: "SemanticKITTISCN"
+  TRAIN: ("train",)
+  VAL: ("val",)
+  TEST: ("test",)
+  SemanticKITTISCN:
+    preprocess_dir: "/data/AmitRoyChowdhury/xmuda/SemanticKITTI/preprocess"
+    semantic_kitti_dir: "/data/AmitRoyChowdhury/SemanticKITTI"
+    pselab_paths: "/home/eegrad/csimons/Projects/xmuda/refined_pselab/nuscenes_lidarseg_semantic_kitti/usa_singapore/baseline_singapore/AF_pselab.npz"
+DATALOADER:
+  NUM_WORKERS: 4
+OPTIMIZER:
+  TYPE: "Adam"
+  BASE_LR: 0.001
+SCHEDULER:
+  TYPE: "MultiStepLR"
+  MultiStepLR:
+    gamma: 0.1
+    milestones: (80000, 90000)
+  MAX_ITERATION: 100000
+TRAIN:
+  BATCH_SIZE: 8
+  SUMMARY_PERIOD: 50
+  CHECKPOINT_PERIOD: 5000
+  CLASS_WEIGHTS: [2.27673237, 2.28281817, 4.07063844, 3.19973815, 1., 0.,         2.09485643, 1.53682289, 1.53727826, 1.97895212]
+  XMUDA:
+    lambda_xm_trg: 0.0
+    lambda_pl: 1.0
+    ckpt_2d: '/home/eegrad/csimons/Projects/xmuda/output/109330/nuscenes_lidarseg_semantic_kitti/usa_singapore/baseline_usa/model_2d_100000.pth'
+    ckpt_3d: '/home/eegrad/csimons/Projects/xmuda/output/109331/nuscenes_lidarseg_semantic_kitti/usa_singapore/baseline_singapore/model_3d_100000.pth'
+VAL:
+  BATCH_SIZE: 8 
+  PERIOD: 5000
+OUTPUT_DIR: "/data/AmitRoyChowdhury/xmuda/pselab/@"
+#OUTPUT_DIR: "eval_result/@"

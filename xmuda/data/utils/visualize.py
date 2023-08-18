@@ -4,6 +4,47 @@ from matplotlib.animation import FuncAnimation
 import numpy as np
 from xmuda.data.utils.turbo_cmap import interpolate_or_clip, turbo_colormap_data
 
+RELLIS_3D_ID_TO_BGR = {0: (0, 0, 0),
+                       1: (20, 64, 108),
+                       3: (0, 102, 0),
+                       4: (0, 255, 0),
+                       5: (153, 153, 0),
+                       6: (255, 128, 0),
+                       7: (255, 0, 0),
+                       8: (0, 255, 255),
+                       9: (127, 0, 255),
+                       10: (64, 64, 64),
+                       12: (0, 0, 255),
+                       15: (0, 0, 102),
+                       17: (255, 153, 204),
+                       18: (204, 0, 102),
+                       19: (204, 153, 255),
+                       23: (170, 170, 170),
+                       27: (255, 121, 41),
+                       29: (255, 31, 101),
+                       30: (9, 149, 137),
+                       31: (239, 255, 134),
+                       33: (34, 66, 99),
+                       34: (138, 22, 110)}
+
+RELLIS_3D_COLOR_PALETTE = [RELLIS_3D_ID_TO_BGR[id] if id in RELLIS_3D_ID_TO_BGR.keys() else [0, 0, 0]
+                                for id in range(list(RELLIS_3D_ID_TO_BGR.keys())[-1] + 1)]
+
+RELLIS_3D_COLOR_PALETTE_SHORT_BGR = [
+    [255,   0,   0],  # sky
+    [ 20,  64, 108],  # ground 
+    [255,  128,  0],  # water
+    [  0,  255,  0],  # vegetation
+    [255, 153, 204],  # person 
+    [ 64,  64,  64],  # road
+    [  0,   0, 255],  # building
+    [255, 121,  41],  # barrier
+    [  0, 255, 255],  # vehicle 
+    [255,  31, 101],  # incline
+    [127,   0, 255], # other objects
+    [  0,   0,   0],  # ignore
+]
+RELLIS_3D_COLOR_PALETTE_SHORT = [(c[2], c[1], c[0]) for c in RELLIS_3D_COLOR_PALETTE_SHORT_BGR]
 
 # all classes
 NUSCENES_COLOR_PALETTE = [
@@ -111,6 +152,10 @@ def draw_points_image_labels(img, img_indices, seg_labels, save_pth=None, color_
         color_palette = SEMANTIC_KITTI_COLOR_PALETTE_SHORT
     elif color_palette_type == 'SemanticKITTI_long':
         color_palette = SEMANTIC_KITTI_COLOR_PALETTE
+    elif color_palette_type == 'Rellis3D':
+        color_palette = RELLIS_3D_COLOR_PALETTE_SHORT
+    elif color_palette_type == 'Rellis3D_long':
+        color_palette = RELLIS_3D_COLOR_PALETTE
     else:
         raise NotImplementedError('Color palette type not supported')
     color_palette = np.array(color_palette) / 255.
@@ -138,6 +183,10 @@ def draw_points_pred_gt(img, img_indices, pred, seg_labels, save_pth=None, color
         color_palette = SEMANTIC_KITTI_COLOR_PALETTE_SHORT
     elif color_palette_type == 'SemanticKITTI_long':
         color_palette = SEMANTIC_KITTI_COLOR_PALETTE
+    elif color_palette_type == 'Rellis3D':
+        color_palette = RELLIS_3D_COLOR_PALETTE_SHORT
+    elif color_palette_type == 'Rellis3D_long':
+        color_palette = RELLIS_3D_COLOR_PALETTE
     else:
         raise NotImplementedError('Color palette type not supported')
     color_palette = np.array(color_palette) / 255.
@@ -170,6 +219,10 @@ def draw_points_pred_agree(img, img_indices, pred_2d, pred_3d, save_pth=None, co
         color_palette = SEMANTIC_KITTI_COLOR_PALETTE_SHORT
     elif color_palette_type == 'SemanticKITTI_long':
         color_palette = SEMANTIC_KITTI_COLOR_PALETTE
+    elif color_palette_type == 'Rellis3D':
+        color_palette = RELLIS_3D_COLOR_PALETTE_SHORT
+    elif color_palette_type == 'Rellis3D_long':
+        color_palette = RELLIS_3D_COLOR_PALETTE
     else:
         raise NotImplementedError('Color palette type not supported')
     palette = np.asarray([[1., 0., 0.], [0., 1., 0.]])
@@ -230,6 +283,10 @@ def draw_seg_image(img, save_pth=None, color_palette_type='NuScenes'):
         color_palette = SEMANTIC_KITTI_COLOR_PALETTE_SHORT
     elif color_palette_type == 'SemanticKITTI_long':
         color_palette = SEMANTIC_KITTI_COLOR_PALETTE
+    elif color_palette_type == 'Rellis3D':
+        color_palette = RELLIS_3D_COLOR_PALETTE_SHORT
+    elif color_palette_type == 'Rellis3D_long':
+        color_palette = RELLIS_3D_COLOR_PALETTE
     else:
         raise NotImplementedError('Color palette type not supported')
     color_palette = np.array(color_palette) / 255.

@@ -36,4 +36,5 @@ TRAIN:
 VAL:
   BATCH_SIZE: 32
   PERIOD: 5000
-OUTPUT_DIR: "eval_result/@"  #  @ will be replaced with config path, e.g. nuscenes/usa_singapore/xmuda
+OUTPUT_DIR: "/data/AmitRoyChowdhury/xmuda/pselab/@"
+#OUTPUT_DIR: "eval_result/@"  #  @ will be replaced with config path, e.g. nuscenes/usa_singapore/xmuda

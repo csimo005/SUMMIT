@@ -39,9 +39,9 @@ TRAIN:
 #  CLASS_WEIGHTS: [1.89090012, 2.0585112, 3.1970535, 3.1111633, 1., 2.93751704, 1.92053733, 1.47886874, 1.04654198, 1.78266561] # Calculated on source
   CLASS_WEIGHTS: [1.43362546, 1.68430174, 2.54949885, 2.43392463, 1.05573959, 1.96980431, 1.33744715, 1.16531414, 1., 1.37781799] # Estimated from pseudo labels
   XMUDA:
-    lambda_xm_trg: 0.01
-    lambda_ent: 0.
-    lambda_div: 0.
+    lambda_xm_trg: 0.
+    lambda_ent: 0.1
+    lambda_div: 0.001
     lambda_pl: 1.0
     ckpt_2d: '/home/eegrad/csimons/Projects/xmuda/output/76054/a2d2_semantic_kitti/baseline/model_2d_100000.pth'
     ckpt_3d: '/home/eegrad/csimons/Projects/xmuda/output/76054/a2d2_semantic_kitti/baseline/model_3d_100000.pth'
@@ -49,4 +49,3 @@ VAL:
   BATCH_SIZE: 1
   PERIOD: 5000
 OUTPUT_DIR: "eval_result/@"
-RNG_SEED: -1

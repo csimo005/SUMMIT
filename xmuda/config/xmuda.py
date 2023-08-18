@@ -31,6 +31,7 @@ _C.TRAIN.XMUDA.pseudo_label_period = 0
 
 _C.TRAIN.XMUDA.ckpt_2d = ''
 _C.TRAIN.XMUDA.ckpt_3d = ''
+_C.TRAIN.XMUDA.threhold_path = ''
 
 _C.TRAIN.XMUDA.LABELING = CN()
 _C.TRAIN.XMUDA.LABELING.noisy_label = False
@@ -73,7 +74,32 @@ _C.DATASET_SOURCE.NuScenesSCN.augmentation.fliplr = 0.5
 _C.DATASET_SOURCE.NuScenesSCN.augmentation.color_jitter = (0.4, 0.4, 0.4)
 # copy over the same arguments to target dataset settings
 _C.DATASET_TARGET.NuScenesSCN = CN(_C.DATASET_SOURCE.NuScenesSCN)
-_C.DATASET_TARGET.NuScenesSCN.pselab_paths = tuple()
+_C.DATASET_TARGET.NuScenesSCN.pselab_paths = None 
+
+# NuScenesLidarSegSCN
+_C.DATASET_SOURCE.NuScenesLidarSegSCN = CN()
+_C.DATASET_SOURCE.NuScenesLidarSegSCN.preprocess_dir = ''
+_C.DATASET_SOURCE.NuScenesLidarSegSCN.nuscenes_dir = ''
+_C.DATASET_SOURCE.NuScenesLidarSegSCN.merge_classes = True
+# 3D
+_C.DATASET_SOURCE.NuScenesLidarSegSCN.scale = 20
+_C.DATASET_SOURCE.NuScenesLidarSegSCN.full_scale = 4096
+# 2D
+_C.DATASET_SOURCE.NuScenesLidarSegSCN.use_image = True
+_C.DATASET_SOURCE.NuScenesLidarSegSCN.resize = (400, 225)
+_C.DATASET_SOURCE.NuScenesLidarSegSCN.image_normalizer = ()
+# 3D augmentation
+_C.DATASET_SOURCE.NuScenesLidarSegSCN.augmentation = CN()
+_C.DATASET_SOURCE.NuScenesLidarSegSCN.augmentation.noisy_rot = 0.1
+_C.DATASET_SOURCE.NuScenesLidarSegSCN.augmentation.flip_x = 0.5
+_C.DATASET_SOURCE.NuScenesLidarSegSCN.augmentation.rot_z = 6.2831  # 2 * pi
+_C.DATASET_SOURCE.NuScenesLidarSegSCN.augmentation.transl = True
+# 2D augmentation
+_C.DATASET_SOURCE.NuScenesLidarSegSCN.augmentation.fliplr = 0.5
+_C.DATASET_SOURCE.NuScenesLidarSegSCN.augmentation.color_jitter = (0.4, 0.4, 0.4)
+# copy over the same arguments to target dataset settings
+_C.DATASET_TARGET.NuScenesLidarSegSCN = CN(_C.DATASET_SOURCE.NuScenesLidarSegSCN)
+_C.DATASET_TARGET.NuScenesLidarSegSCN.pselab_paths = None 
 
 # A2D2SCN
 _C.DATASET_SOURCE.A2D2SCN = CN()
@@ -118,7 +144,31 @@ _C.DATASET_SOURCE.SemanticKITTISCN.augmentation.fliplr = 0.5
 _C.DATASET_SOURCE.SemanticKITTISCN.augmentation.color_jitter = (0.4, 0.4, 0.4)
 # copy over the same arguments to target dataset settings
 _C.DATASET_TARGET.SemanticKITTISCN = CN(_C.DATASET_SOURCE.SemanticKITTISCN)
-_C.DATASET_TARGET.SemanticKITTISCN.pselab_paths = tuple()
+_C.DATASET_TARGET.SemanticKITTISCN.pselab_paths = None 
+
+# Rellis3DSCN
+_C.DATASET_SOURCE.Rellis3DSCN = CN()
+_C.DATASET_SOURCE.Rellis3DSCN.preprocess_dir = ''
+_C.DATASET_SOURCE.Rellis3DSCN.rellis_3d_dir = ''
+_C.DATASET_SOURCE.Rellis3DSCN.merge_classes = True
+# 3D
+_C.DATASET_SOURCE.Rellis3DSCN.scale = 20
+_C.DATASET_SOURCE.Rellis3DSCN.full_scale = 4096
+# 2D
+_C.DATASET_SOURCE.Rellis3DSCN.image_normalizer = ()
+# 3D augmentation
+_C.DATASET_SOURCE.Rellis3DSCN.augmentation = CN()
+_C.DATASET_SOURCE.Rellis3DSCN.augmentation.noisy_rot = 0.1
+_C.DATASET_SOURCE.Rellis3DSCN.augmentation.flip_y = 0.5
+_C.DATASET_SOURCE.Rellis3DSCN.augmentation.rot_z = 6.2831  # 2 * pi
+_C.DATASET_SOURCE.Rellis3DSCN.augmentation.transl = True
+# 2D augmentation
+_C.DATASET_SOURCE.Rellis3DSCN.augmentation.bottom_crop = (480, 302)
+_C.DATASET_SOURCE.Rellis3DSCN.augmentation.fliplr = 0.5
+_C.DATASET_SOURCE.Rellis3DSCN.augmentation.color_jitter = (0.4, 0.4, 0.4)
+# copy over the same arguments to target dataset settings
+_C.DATASET_TARGET.Rellis3DSCN = CN(_C.DATASET_SOURCE.Rellis3DSCN)
+_C.DATASET_TARGET.Rellis3DSCN.pselab_paths = None 
 
 # ---------------------------------------------------------------------------- #
 # Model 2D

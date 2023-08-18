@@ -1,4 +1,5 @@
 from xmuda.data.nuscenes.nuscenes_dataloader import NuScenesSCN
+from xmuda.data.nuscenes_lidarseg.nuscenes_lidarseg_dataloader import NuScenesLidarSegSCN
 from xmuda.data.a2d2.a2d2_dataloader import A2D2SCN
 from xmuda.data.semantic_kitti.semantic_kitti_dataloader import SemanticKITTISCN
 
@@ -47,65 +48,31 @@ def printStats(stats):
     print('Average Points: {}'.format(stats['total_points']/float(stats['length'])))
     print('Class Counts: {}'.format(stats['class_dist']))
 
-#dataset = NuScenesSCN(split=('train_day',),
-#                      preprocess_dir='/data/AmitRoyChowdhury/xmuda/nuscenes/preprocess', 
-#                      nuscenes_dir='/data/AmitRoyChowdhury/nuscenes',
-#                      use_image=True,
-#                      resize=None,
-#                      merge_classes=True)
-#printStats(calcStats(dataset))
-#dataset = NuScenesSCN(split=('test_day',),
-#                      preprocess_dir='/data/AmitRoyChowdhury/xmuda/nuscenes/preprocess', 
-#                      nuscenes_dir='/data/AmitRoyChowdhury/nuscenes',
-#                      use_image=True,
-#                      resize=None,
-#                      merge_classes=True)
-#printStats(calcStats(dataset))
-#dataset = NuScenesSCN(split=('train_night',),
-#                      preprocess_dir='/data/AmitRoyChowdhury/xmuda/nuscenes/preprocess', 
-#                      nuscenes_dir='/data/AmitRoyChowdhury/nuscenes',
-#                      use_image=True,
-#                      resize=None,
-#                      merge_classes=True)
-#printStats(calcStats(dataset))
-#dataset = NuScenesSCN(split=('test_night',),
-#                      preprocess_dir='/data/AmitRoyChowdhury/xmuda/nuscenes/preprocess', 
-#                      nuscenes_dir='/data/AmitRoyChowdhury/nuscenes',
-#                      use_image=True,
-#                      resize=None,
-#                      merge_classes=True)
-#printStats(calcStats(dataset))
-#dataset = NuScenesSCN(split=('val_night',),
-#                      preprocess_dir='/data/AmitRoyChowdhury/xmuda/nuscenes/preprocess', 
-#                      nuscenes_dir='/data/AmitRoyChowdhury/nuscenes',
-#                      use_image=True,
-#                      resize=None,
-#                      merge_classes=True)
-#printStats(calcStats(dataset))
-dataset = A2D2SCN(split=('train',),
-                  preprocess_dir='/data/AmitRoyChowdhury/xmuda/a2d2', 
-                  use_image=True,
-                  resize=None,
-                  merge_classes=True)
+dataset = NuScenesLidarSegSCN(split=('test_usa',),
+                              nuscenes_dir='/data/AmitRoyChowdhury/nuscenes/', 
+                              preprocess_dir='/data/AmitRoyChowdhury/xmuda/nuscenes_lidarseg/preprocess', 
+                              use_image=True,
+                              resize=None,
+                              merge_classes=True)
 printStats(calcStats(dataset))
-dataset = A2D2SCN(split=('test',),
-                  preprocess_dir='/data/AmitRoyChowdhury/xmuda/a2d2', 
-                  use_image=True,
-                  resize=None,
-                  merge_classes=True)
+dataset = NuScenesLidarSegSCN(split=('test_singapore',),
+                              nuscenes_dir='/data/AmitRoyChowdhury/nuscenes/', 
+                              preprocess_dir='/data/AmitRoyChowdhury/xmuda/nuscenes_lidarseg/preprocess', 
+                              use_image=True,
+                              resize=None,
+                              merge_classes=True)
 printStats(calcStats(dataset))
-dataset = SemanticKITTISCN(split=('train',),
-                           preprocess_dir="/data/AmitRoyChowdhury/xmuda/SemanticKITTI/preprocess",
-                           semantic_kitti_dir="/data/AmitRoyChowdhury/SemanticKITTI",
-                           merge_classes=True)
+dataset = NuScenesLidarSegSCN(split=('test_day',),
+                              nuscenes_dir='/data/AmitRoyChowdhury/nuscenes/', 
+                              preprocess_dir='/data/AmitRoyChowdhury/xmuda/nuscenes_lidarseg/preprocess', 
+                              use_image=True,
+                              resize=None,
+                              merge_classes=True)
 printStats(calcStats(dataset))
-dataset = SemanticKITTISCN(split=('test',),
-                           preprocess_dir="/data/AmitRoyChowdhury/xmuda/SemanticKITTI/preprocess",
-                           semantic_kitti_dir="/data/AmitRoyChowdhury/SemanticKITTI",
-                           merge_classes=True)
-printStats(calcStats(dataset))
-dataset = SemanticKITTISCN(split=('val',),
-                           preprocess_dir="/data/AmitRoyChowdhury/xmuda/SemanticKITTI/preprocess",
-                           semantic_kitti_dir="/data/AmitRoyChowdhury/SemanticKITTI",
-                           merge_classes=True)
+dataset = NuScenesLidarSegSCN(split=('test_night',),
+                              nuscenes_dir='/data/AmitRoyChowdhury/nuscenes/', 
+                              preprocess_dir='/data/AmitRoyChowdhury/xmuda/nuscenes_lidarseg/preprocess', 
+                              use_image=True,
+                              resize=None,
+                              merge_classes=True)
 printStats(calcStats(dataset))

@@ -42,7 +42,7 @@ class Evaluator(object):
 
     @property
     def class_seg_acc(self):
-        return [self.confusion_matrix[i, i] / np.sum(self.confusion_matrix[i])
+        return [self.confusion_matrix[i, i] / np.sum(self.confusion_matrix[i]) if np.sum(self.confusion_matrix[i]) else 0.
                 for i in range(self.num_classes)]
 
     @property

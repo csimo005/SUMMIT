@@ -19,7 +19,7 @@ from xmuda.common.utils.torch_util import set_random_seed
 from xmuda.models.build import build_model_2d, build_model_3d
 from xmuda.data.build import build_dataloader
 from xmuda.data.utils.validate import validate
-from xmuda.models.losses import entropy_loss, information_maximization_loss
+from xmuda.models.losses import entropy_loss
 
 
 def parse_args():
@@ -67,6 +67,22 @@ def train(cfg, output_dir='', run_name=''):
     logger.info('Build 2D model:\n{}'.format(str(model_2d)))
     num_params = sum(param.numel() for param in model_2d.parameters())
     print('#Parameters: {:.2e}'.format(num_params))
+    
+    if cfg.TRAIN.XMUDA.ckpt_2d:
+        state_dict = torch.load(cfg.TRAIN.XMUDA.ckpt_2d, map_location=torch.device('cpu'))
+        print('Successfully loaded 2D checkpoint: {}'.format(cfg.TRAIN.XMUDA.ckpt_2d))
+        weights = state_dict['model']
+        if cfg.MODEL_2D.DUAL_HEAD and 'linear2.weight' not in weights:
+            print('Expanding single head model to dual head')
+            weights['linear2.weight'] = weights['linear.weight']
+            weights['linear2.bias'] = weights['linear.bias']
+        elif not cfg.MODEL_2D.DUAL_HEAD and 'linear2.weight' in weights:
+            print('Ignoring extra output head')
+            del weights['linear2.weight']
+            del weights['linear2.bias']
+
+        model_2d.load_state_dict(weights)
+    model_2d = model_2d.cuda()
 
     # build 3d model
     model_3d, train_metric_3d = build_model_3d(cfg)
@@ -74,19 +90,21 @@ def train(cfg, output_dir='', run_name=''):
     num_params = sum(param.numel() for param in model_3d.parameters())
     print('#Parameters: {:.2e}'.format(num_params))
 
-    model_2d = model_2d.cuda()
-    state_dict = torch.load('output/76054/a2d2_semantic_kitti/baseline/model_2d_100000.pth')['model']
-    if 'linear2.weight' not in state_dict:
-        state_dict['linear2.weight'] = state_dict['linear.weight']
-        state_dict['linear2.bias'] = state_dict['linear.bias']
-    model_2d.load_state_dict(state_dict)
+    if cfg.TRAIN.XMUDA.ckpt_3d:
+        state_dict = torch.load(cfg.TRAIN.XMUDA.ckpt_3d, map_location=torch.device('cpu'))
+        print('Successfully loaded 3D checkpoint: {}'.format(cfg.TRAIN.XMUDA.ckpt_3d))
+        weights = state_dict['model']
+        if cfg.MODEL_3D.DUAL_HEAD and 'linear2.weight' not in weights:
+            print('Expanding single head model to dual head')
+            weights['linear2.weight'] = weights['linear.weight']
+            weights['linear2.bias'] = weights['linear.bias']
+        elif not cfg.MODEL_3D.DUAL_HEAD and 'linear2.weight' in weights:
+            print('Ignoring extra output head')
+            del weights['linear2.weight']
+            del weights['linear2.bias']
 
+        model_3d.load_state_dict(weights)
     model_3d = model_3d.cuda()
-    state_dict = torch.load('output/76054/a2d2_semantic_kitti/baseline/model_3d_100000.pth')['model']
-    if 'linear2.weight' not in state_dict:
-        state_dict['linear2.weight'] = state_dict['linear.weight']
-        state_dict['linear2.bias'] = state_dict['linear.bias']
-    model_3d.load_state_dict(state_dict)
 
     # build optimizer
     optimizer_2d = build_optimizer(cfg, model_2d)
@@ -299,14 +317,6 @@ def train(cfg, output_dir='', run_name=''):
                 loss_2d.append(cfg.TRAIN.XMUDA.lambda_minent * minent_loss_trg_2d)
                 loss_3d.append(cfg.TRAIN.XMUDA.lambda_minent * minent_loss_trg_3d)
 
-            if cfg.TRAIN.XMUDA.lambda_ent > 0 or cfg.TRAIN.XMUDA.lambda_div > 0:
-                im_loss_trg_2d = information_maximization_loss(F.softmax(preds_2d['seg_logit'], dim=1), cfg.TRAIN.XMUDA.lambda_ent, cfg.TRAIN.XMUDA.lambda_div)
-                im_loss_trg_3d = information_maximization_loss(F.softmax(preds_3d['seg_logit'], dim=1), cfg.TRAIN.XMUDA.lambda_ent, cfg.TRAIN.XMUDA.lambda_div)
-                train_metric_logger.update(im_loss_trg_2d=im_loss_trg_2d,
-                                           im_loss_trg_3d=im_loss_trg_3d)
-                loss_2d.append(im_loss_trg_2d)
-                loss_3d.append(im_loss_trg_3d)
-    
             sum(loss_2d).backward()
             sum(loss_3d).backward()
 

@@ -78,14 +78,16 @@ class Net2DSeg(nn.Module):
     def classify_features(self, features):
         return self.linear(features)
     
-    def classifier_parameters(self, features):
+    def classifier_parameters(self):
+        return self.linear.parameters()
+
+    def xmuda_classifier_parameters(self):
         if self.dual_head:
-            return list(*self.linear.parameters()) + list(*self.linear2.parameters())
-        else:
-            return self.linear.parameters()
+            return self.linear2.parameters()
+        return None
     
-    def feat_encoder_parameters(self, features):
-        return self.net_3d.parameters()
+    def feat_encoder_parameters(self):
+        return self.net_2d.parameters()
 
 class Net3DSeg(nn.Module):
     def __init__(self,
@@ -127,14 +129,16 @@ class Net3DSeg(nn.Module):
     def classify_features(self, features):
         return self.linear(features)
     
-    def classifier_parameters(self, features):
+    def classifier_parameters(self):
+        return self.linear.parameters()
+
+    def xmuda_classifier_parameters(self):
         if self.dual_head:
-            return list(*self.linear.parameters()) + list(*self.linear2.parameters())
-        else:
-            return self.linear.parameters()
+            return self.linear2.parameters()
+        return None
     
-    def feat_encoder_parameters(self, features):
-        return self.backbone_3d.parameters()
+    def feat_encoder_parameters(self):
+        return self.net_3d.parameters()
     
 def test_Net2DSeg():
     # 2D

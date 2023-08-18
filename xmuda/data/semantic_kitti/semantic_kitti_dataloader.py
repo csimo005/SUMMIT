@@ -89,39 +89,25 @@ class SemanticKITTIBase(Dataset):
 
         self.pselab_data = None
         if pselab_paths:
-            assert isinstance(pselab_paths, tuple)
+            assert isinstance(pselab_paths, str)
             print('Load pseudo label data ', pselab_paths)
-            self.pselab_data = []
-            for curr_split in pselab_paths:
-                self.pselab_data.extend(np.load(curr_split, allow_pickle=True))
+            pselab = np.load(pselab_paths)
 
-            # check consistency of data and pseudo labels
-            assert len(self.pselab_data) == len(self.data)
-            for i in range(len(self.pselab_data)):
-                assert len(self.pselab_data[i]['pseudo_label_2d']) == len(self.data[i]['seg_labels'])
-
-            probs2d = np.concatenate([data['probs_2d'] for data in self.pselab_data])
-            pseudo_label_2d = np.concatenate([data['pseudo_label_2d'] for data in self.pselab_data]).astype(np.int)
-
-            # refine 3d pseudo labels
-            # fusion model has only one final prediction saved in probs_2d
-            if 'probs_3d' in self.pselab_data[0].keys():
-                probs3d = np.concatenate([data['probs_3d'] for data in self.pselab_data])
-                pseudo_label_3d = np.concatenate([data['pseudo_label_3d'] for data in self.pselab_data]).astype(np.int)
-                pseudo_label_2d, pseudo_label_3d = agreement_filter_pl(probs2d, pseudo_label_2d, probs3d, pseudo_label_3d)
+            if 'refined_pseudo_label' in pselab.files:
+                pseudo_label_2d = pselab['refined_pseudo_label']
+                pseudo_label_3d = pseudo_label_2d
             else:
-                pseudo_label_2d = refine_pseudo_labels(probs2d, pseudo_label_2d)
-                pseudo_label_3d = None
+                pseudo_label_2d = pselab['refined_pseudo_label_2d']
+                pseudo_label_3d = pselab['refined_pseudo_label_3d']
 
             # undo concat
             left_idx = 0
-            for data_idx in range(len(self.pselab_data)):
-                right_idx = left_idx + len(self.pselab_data[data_idx]['probs_2d'])
+            self.pselab_data = [None]*len(self.data)
+            for data_idx in range(len(self.data)):
+                right_idx = left_idx + len(self.data[data_idx]['points'])
+                self.pselab_data[data_idx] = {}
                 self.pselab_data[data_idx]['pseudo_label_2d'] = pseudo_label_2d[left_idx:right_idx]
-                if pseudo_label_3d is not None:
-                    self.pselab_data[data_idx]['pseudo_label_3d'] = pseudo_label_3d[left_idx:right_idx]
-                else:
-                    self.pselab_data[data_idx]['pseudo_label_3d'] = None
+                self.pselab_data[data_idx]['pseudo_label_3d'] = pseudo_label_3d[left_idx:right_idx]
                 left_idx = right_idx
 
         if merge_classes:

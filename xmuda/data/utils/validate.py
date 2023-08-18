@@ -95,10 +95,8 @@ def validate(cfg,
                     curr_feats_3d = feats_3d[left_idx:right_idx] if model_3d else None
                     pselab_data_list.append({
                         'probs_2d': curr_probs_2d.cpu().numpy(),
-                        'pseudo_label_2d': pred_label_2d.astype(np.uint8),
                         'features_2d': curr_feats_2d.cpu().numpy(),
                         'probs_3d': curr_probs_3d.cpu().numpy() if model_3d else None,
-                        'pseudo_label_3d': pred_label_3d.astype(np.uint8) if model_3d else None,
                         'features_3d': curr_feats_3d.cpu().numpy() if model_3d else None
                     })
 
@@ -149,7 +147,6 @@ def validate(cfg,
 
                 left_idx = right_idx
                     
-
             seg_loss_2d = F.cross_entropy(preds_2d['seg_logit'], data_batch['seg_label'])
             seg_loss_3d = F.cross_entropy(preds_3d['seg_logit'], data_batch['seg_label']) if model_3d else None
             val_metric_logger.update(seg_loss_2d=seg_loss_2d)
@@ -194,5 +191,16 @@ def validate(cfg,
 
         model_2d.full_img = False
         if pselab_path is not None:
-            np.save(pselab_path, pselab_data_list)
-            logger.info('Saved pseudo label data to {}'.format(pselab_path))
+            i = 1
+            while len(pselab_data_list):
+                pselab_data = {}
+                end = min(1000, len(pselab_data_list))
+                print(end, i, len(pselab_data_list))
+                for key in list(pselab_data_list[0].keys()):
+                    pselab_data[key] = np.concatenate([item[key] for item in pselab_data_list[:end]])
+
+                pselab_data_list = pselab_data_list[end:]
+                save_path = pselab_path + '_pt{:03d}'.format(i)
+                np.savez(save_path, **pselab_data)
+                logger.info('Saved pseudo label data to {}'.format(save_path))
+                i += 1

@@ -19,7 +19,7 @@ DATASET_TARGET:
   NuScenesSCN:
     preprocess_dir: "/data/AmitRoyChowdhury/xmuda/nuscenes/preprocess"
     nuscenes_dir: "/data/AmitRoyChowdhury/nuscenes"  # only front cam images are needed
-    pselab_paths: ("/home/eegrad/csimons/Projects/xmuda/eval_result/nuscenes/usa_singapore/baseline/pselab_data/train_singapore.npy",)
+    pselab_paths: "/home/eegrad/csimons/Projects/xmuda/refined_pselab/nuscenes/usa_singapore/unimodal.npz"
 DATALOADER:
   NUM_WORKERS: 4
 OPTIMIZER:
@@ -36,9 +36,13 @@ TRAIN:
   SUMMARY_PERIOD: 50
   CHECKPOINT_PERIOD: 5000
 #  CLASS_WEIGHTS: [2.47956584, 4.26788384, 5.71114131, 3.80241668, 1.] # Calculated on source, not source free
-  CLASS_WEIGHTS: [2.94507397, 4.21026124, 5.43160993, 3.95353505, 1.]
+#  CLASS_WEIGHTS: [2.94507397, 4.21026124, 5.43160993, 3.95353505, 1.]
+  CLASS_WEIGHTS: [1., 1., 1., 1., 1.]
   XMUDA:
-    lambda_xm_trg: 0.1 
+    lambda_xm_src: 0.0
+    lambda_xm_trg: 0.1
+    lambda_ent: 0.
+    lambda_div: 0.
     lambda_pl: 1.0
     pseudo_label_period: 0
     ckpt_2d: '/home/eegrad/csimons/Projects/xmuda/output/73301/nuscenes/usa_singapore/baseline/model_2d_100000.pth'

@@ -6,8 +6,10 @@ from xmuda.common.utils.torch_util import worker_init_fn
 from xmuda.data.collate import get_collate_scn
 from xmuda.common.utils.sampler import IterationBasedBatchSampler
 from xmuda.data.nuscenes.nuscenes_dataloader import NuScenesSCN
+from xmuda.data.nuscenes_lidarseg.nuscenes_lidarseg_dataloader import NuScenesLidarSegSCN
 from xmuda.data.a2d2.a2d2_dataloader import A2D2SCN
 from xmuda.data.semantic_kitti.semantic_kitti_dataloader import SemanticKITTISCN
+from xmuda.data.rellis_3d.rellis_3d_dataloader import Rellis3DSCN
 
 
 def build_dataloader(cfg, mode='train', domain='source', start_iteration=0, halve_batch_size=False):
@@ -35,6 +37,11 @@ def build_dataloader(cfg, mode='train', domain='source', start_iteration=0, halv
                               output_orig=not is_train,
                               **dataset_kwargs,
                               **augmentation)
+    elif dataset_cfg.TYPE == 'NuScenesLidarSegSCN':
+        dataset = NuScenesLidarSegSCN(split=split,
+                                      output_orig=not is_train,
+                                      **dataset_kwargs,
+                                      **augmentation)
     elif dataset_cfg.TYPE == 'A2D2SCN':
         dataset = A2D2SCN(split=split,
                           output_orig=not is_train,
@@ -42,6 +49,11 @@ def build_dataloader(cfg, mode='train', domain='source', start_iteration=0, halv
                           **augmentation)
     elif dataset_cfg.TYPE == 'SemanticKITTISCN':
         dataset = SemanticKITTISCN(split=split,
+                                   output_orig=not is_train,
+                                   **dataset_kwargs,
+                                   **augmentation)
+    elif dataset_cfg.TYPE == 'Rellis3DSCN':
+        dataset = Rellis3DSCN(split=split,
                                    output_orig=not is_train,
                                    **dataset_kwargs,
                                    **augmentation)

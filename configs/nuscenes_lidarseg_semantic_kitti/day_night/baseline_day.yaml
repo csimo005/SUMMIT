@@ -1,21 +1,23 @@
 MODEL_2D:
   TYPE: "UNetResNet34"
+  NUM_CLASSES: 10
 MODEL_3D:
   TYPE: "SCN"
+  NUM_CLASSES: 10
 DATASET_SOURCE:
-  TYPE: "NuScenesSCN"
+  TYPE: "NuScenesLidarSegSCN"
   TRAIN: ("train_day",)
   TEST: ("test_day",)
-  NuScenesSCN:
-    preprocess_dir: "/data/AmitRoyChowdhury/xmuda/nuscenes/preprocess"
+  NuScenesLidarSegSCN:
+    preprocess_dir: "/data/AmitRoyChowdhury/xmuda/nuscenes_lidarseg/preprocess"
     nuscenes_dir: "/data/AmitRoyChowdhury/nuscenes"  # only front cam images are needed
 DATASET_TARGET:
-  TYPE: "NuScenesSCN"
-  VAL: ("val_night",)
-  TEST: ("test_night",)
-  NuScenesSCN:
-    preprocess_dir: "/data/AmitRoyChowdhury/xmuda/nuscenes/preprocess"
-    nuscenes_dir: "/data/AmitRoyChowdhury/nuscenes"  # only front cam images are needed
+  TYPE: "SemanticKITTISCN"
+  VAL: ("val",)
+  TEST: ("test",)
+  SemanticKITTISCN:
+    preprocess_dir: "/data/AmitRoyChowdhury/xmuda/SemanticKITTI/preprocess"
+    semantic_kitti_dir: "/data/AmitRoyChowdhury/SemanticKITTI"
 DATALOADER:
   NUM_WORKERS: 4
 OPTIMIZER:
@@ -31,9 +33,9 @@ TRAIN:
   BATCH_SIZE: 8
   SUMMARY_PERIOD: 50
   CHECKPOINT_PERIOD: 5000
-  CLASS_WEIGHTS: [2.68678412, 4.36182969, 5.47896839, 3.89026883, 1.]
+  CLASS_WEIGHTS: [2.27673237, 2.28281817, 4.07063844, 3.19973815, 1., 0.,         2.09485643, 1.53682289, 1.53727826, 1.97895212]
 VAL:
-  BATCH_SIZE: 32
+  BATCH_SIZE: 8 
   PERIOD: 5000
 OUTPUT_DIR: "/data/AmitRoyChowdhury/xmuda/pselab/@"
 #OUTPUT_DIR: "eval_result/@"

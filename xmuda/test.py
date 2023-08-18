@@ -84,7 +84,7 @@ def test(cfg, args, output_dir=''):
         pselab_dir = osp.join(output_dir, 'pselab_data')
         os.makedirs(pselab_dir, exist_ok=True)
         assert len(cfg.DATASET_TARGET.TEST) == 1
-        pselab_path = osp.join(pselab_dir, cfg.DATASET_TARGET.TEST[0] + '.npy')
+        pselab_path = osp.join(pselab_dir, cfg.DATASET_TARGET.TEST[0])
 
     img_path = None
     if args.draw:

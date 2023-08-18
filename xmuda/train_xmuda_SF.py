@@ -75,7 +75,7 @@ def train(cfg, output_dir='', run_name=''):
             print('Expanding single head model to dual head')
             weights['linear2.weight'] = weights['linear.weight']
             weights['linear2.bias'] = weights['linear.bias']
-        elif not cfg.MODEL_2d.DUAL_HEAD and 'linear2.weight' in weights:
+        elif not cfg.MODEL_2D.DUAL_HEAD and 'linear2.weight' in weights:
             print('Ignoring extra output head')
             del weights['linear2.weight']
             del weights['linear2.bias']
@@ -93,11 +93,11 @@ def train(cfg, output_dir='', run_name=''):
         state_dict = torch.load(cfg.TRAIN.XMUDA.ckpt_3d, map_location=torch.device('cpu'))
         print('Successfully loaded 2D checkpoint: {}'.format(cfg.TRAIN.XMUDA.ckpt_3d))
         weights = state_dict['model']
-        if cfg.MODEL_2D.DUAL_HEAD and 'linear2.weight' not in weights:
+        if cfg.MODEL_3D.DUAL_HEAD and 'linear2.weight' not in weights:
             print('Expanding single head model to dual head')
             weights['linear2.weight'] = weights['linear.weight']
             weights['linear2.bias'] = weights['linear.bias']
-        elif not cfg.MODEL_3d.DUAL_HEAD and 'linear2.weight' in weights:
+        elif not cfg.MODEL_3D.DUAL_HEAD and 'linear2.weight' in weights:
             print('Ignoring extra output head')
             del weights['linear2.weight']
             del weights['linear2.bias']
@@ -236,8 +236,8 @@ def train(cfg, output_dir='', run_name=''):
             ent_loss_2d = entropy(F.softmax(preds_2d['seg_logit'], dim=1))
             ent_loss_3d = entropy(F.softmax(preds_3d['seg_logit'], dim=1))
 
-            train_metric_logger.update(ent_loss_trg_2d=ent_loss_trg_2d,
-                                       ent_loss_trg_3d=ent_loss_trg_3d)
+            train_metric_logger.update(ent_loss_2d=ent_loss_2d,
+                                       ent_loss_3d=ent_loss_3d)
             loss_2d.append(cfg.TRAIN.XMUDA.lambda_ent * ent_loss_2d)
             loss_3d.append(cfg.TRAIN.XMUDA.lambda_ent * ent_loss_3d)
         
@@ -245,8 +245,8 @@ def train(cfg, output_dir='', run_name=''):
             div_loss_2d = diversity(F.softmax(preds_2d['seg_logit'], dim=1))
             div_loss_3d = diversity(F.softmax(preds_3d['seg_logit'], dim=1))
 
-            train_metric_logger.update(div_loss_trg_2d=div_loss_trg_2d,
-                                       div_loss_trg_3d=div_loss_trg_3d)
+            train_metric_logger.update(div_loss_2d=div_loss_2d,
+                                       div_loss_3d=div_loss_3d)
             loss_2d.append(cfg.TRAIN.XMUDA.lambda_div * div_loss_2d)
             loss_3d.append(cfg.TRAIN.XMUDA.lambda_div * div_loss_3d)
         
@@ -254,8 +254,8 @@ def train(cfg, output_dir='', run_name=''):
             curr_ent_loss_2d = curriculum_entropy(F.softmax(preds_2d['seg_logit'], dim=1))
             curr_ent_loss_3d = curriculum_entropy(F.softmax(preds_3d['seg_logit'], dim=1))
 
-            train_metric_logger.update(curr_ent_loss_trg_2d=curr_ent_loss_trg_2d,
-                                       curr_ent_loss_trg_3d=curr_ent_loss_trg_3d)
+            train_metric_logger.update(curr_ent_loss_2d=curr_ent_loss_2d,
+                                       curr_ent_loss_3d=curr_ent_loss_3d)
             loss_2d.append(cfg.TRAIN.XMUDA.lambda_curr_ent * curr_ent_loss_2d)
             loss_3d.append(cfg.TRAIN.XMUDA.lambda_curr_ent * curr_ent_loss_3d)
         
@@ -263,8 +263,8 @@ def train(cfg, output_dir='', run_name=''):
             weight_div_loss_2d = weighted_diversity(F.softmax(preds_2d['seg_logit'], dim=1))
             weight_div_loss_3d = weighted_diversity(F.softmax(preds_3d['seg_logit'], dim=1))
 
-            train_metric_logger.update(weight_div_loss_trg_2d=weight_div_loss_trg_2d,
-                                       weight_div_loss_trg_3d=weight_div_loss_trg_3d)
+            train_metric_logger.update(weight_div_loss_2d=weight_div_loss_2d,
+                                       weight_div_loss_3d=weight_div_loss_3d)
             loss_2d.append(cfg.TRAIN.XMUDA.lambda_weight_div * weight_div_loss_2d)
             loss_3d.append(cfg.TRAIN.XMUDA.lambda_weight_div * weight_div_loss_3d)
 

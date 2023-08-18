@@ -11,14 +11,16 @@ def build_optimizer(cfg, model):
         return None
     elif hasattr(torch.optim, name):
         parameters = [{'params': model.feat_encoder_parameters(),
-                       'lr': cfg.OPTIMIZER.FEAT_ENCODER_LR if cfg.OPTIMIZER.FEAT_ENCODER_LR > 1 else cfg.OPTIMIZER.BASE_LR,
-                       'weight_decay': cfg.OPTIMIZER.FEAT_ENCODER_WEIGHT_DECAY if cfg.OPTIMIZER.FEAT_ENCODER_WEIGHT_DECAY > 1 else cfg.OPTIMIZER.WEIGHT_DECAY},
+                       'lr': cfg.OPTIMIZER.FEAT_ENCODER_LR if cfg.OPTIMIZER.FEAT_ENCODER_LR > -1 else cfg.OPTIMIZER.BASE_LR,
+                       'weight_decay': cfg.OPTIMIZER.FEAT_ENCODER_WEIGHT_DECAY if cfg.OPTIMIZER.FEAT_ENCODER_WEIGHT_DECAY > -1 else cfg.OPTIMIZER.WEIGHT_DECAY},
                       {'params': model.classifier_parameters(),
-                       'lr': cfg.OPTIMIZER.CLASSIFIER_LR if cfg.OPTIMIZER.CLASSIFIER_LR > 1 else cfg.OPTIMIZER.BASE_LR,
-                       'weight_decay': cfg.OPTIMIZER.CLASSIFIER_WEIGHT_DECAY if cfg.OPTIMIZER.CLASSIFIER_WEIGHT_DECAY > 1 else cfg.OPTIMIZER.WEIGHT_DECAY},
-                      {'params': model.xmuda_classifier_parameters(),
-                       'lr': cfg.OPTIMIZER.XMUDA_CLASSIFIER_LR if cfg.OPTIMIZER.XMUDA_CLASSIFIER_LR > 1 else cfg.OPTIMIZER.BASE_LR,
-                       'weight_decay': cfg.OPTIMIZER.XMUDA_CLASSIFIER_WEIGHT_DECAY if cfg.OPTIMIZER.XMUDA_CLASSIFIER_WEIGHT_DECAY > 1 else cfg.OPTIMIZER.WEIGHT_DECAY}]
+                       'lr': cfg.OPTIMIZER.CLASSIFIER_LR if cfg.OPTIMIZER.CLASSIFIER_LR > -1 else cfg.OPTIMIZER.BASE_LR,
+                       'weight_decay': cfg.OPTIMIZER.CLASSIFIER_WEIGHT_DECAY if cfg.OPTIMIZER.CLASSIFIER_WEIGHT_DECAY > -1 else cfg.OPTIMIZER.WEIGHT_DECAY}]
+        xmuda_params = model.xmuda_classifier_parameters()
+        if not xmuda_params is None:
+            parameters.append({'params': model.xmuda_classifier_parameters(),
+                               'lr': cfg.OPTIMIZER.XMUDA_CLASSIFIER_LR if cfg.OPTIMIZER.XMUDA_CLASSIFIER_LR > -1 else cfg.OPTIMIZER.BASE_LR,
+                               'weight_decay': cfg.OPTIMIZER.XMUDA_CLASSIFIER_WEIGHT_DECAY if cfg.OPTIMIZER.XMUDA_CLASSIFIER_WEIGHT_DECAY > -1 else cfg.OPTIMIZER.WEIGHT_DECAY})
         return getattr(torch.optim, name)(
             parameters, 
             lr=cfg.OPTIMIZER.BASE_LR,

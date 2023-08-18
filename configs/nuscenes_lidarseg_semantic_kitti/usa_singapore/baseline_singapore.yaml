@@ -1,15 +1,18 @@
 MODEL_2D:
   TYPE: "UNetResNet34"
   NUM_CLASSES: 10
+  DUAL_HEAD: TRUE
 MODEL_3D:
   TYPE: "SCN"
   NUM_CLASSES: 10
+  DUAL_HEAD: TRUE
 DATASET_SOURCE:
-  TYPE: "A2D2SCN"
-  TRAIN: ("train",)
-  TEST: ("test",)
-  A2D2SCN:
-    preprocess_dir: "/data/AmitRoyChowdhury/xmuda/a2d2"
+  TYPE: "NuScenesLidarSegSCN"
+  TRAIN: ("train_singapore",)
+  TEST: ("test_singapore",)
+  NuScenesLidarSegSCN:
+    preprocess_dir: "/data/AmitRoyChowdhury/xmuda/nuscenes_lidarseg/preprocess"
+    nuscenes_dir: "/data/AmitRoyChowdhury/nuscenes"  # only front cam images are needed
 DATASET_TARGET:
   TYPE: "SemanticKITTISCN"
   VAL: ("val",)
@@ -32,10 +35,9 @@ TRAIN:
   BATCH_SIZE: 8
   SUMMARY_PERIOD: 50
   CHECKPOINT_PERIOD: 5000
-  CLASS_WEIGHTS: [1.89090012, 2.0585112, 3.1970535, 3.1111633, 1., 2.93751704, 1.92053733,
-                  1.47886874, 1.04654198, 1.78266561]
+  CLASS_WEIGHTS: [2.27673237, 2.28281817, 4.07063844, 3.19973815, 1., 0.,         2.09485643, 1.53682289, 1.53727826, 1.97895212]
 VAL:
-  BATCH_SIZE: 1
+  BATCH_SIZE: 8 
   PERIOD: 5000
 OUTPUT_DIR: "/data/AmitRoyChowdhury/xmuda/pselab/@"
-#OUTPUT_DIR: "path/to/output/directory/@"  #  @ will be replaced with config path, e.g. nuscenes/usa_singapore/xmuda
+#OUTPUT_DIR: "eval_result/@"

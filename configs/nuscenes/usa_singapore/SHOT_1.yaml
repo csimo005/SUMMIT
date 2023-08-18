@@ -19,12 +19,13 @@ DATASET_TARGET:
   NuScenesSCN:
     preprocess_dir: "/data/AmitRoyChowdhury/xmuda/nuscenes/preprocess"
     nuscenes_dir: "/data/AmitRoyChowdhury/nuscenes"  # only front cam images are needed
-    pselab_paths: ("/home/eegrad/csimons/Projects/xmuda/eval_result/nuscenes/usa_singapore/baseline/pselab_data/train_singapore.npy",)
+    pselab_paths: "/home/eegrad/csimons/Projects/xmuda/refined_pselab/nuscenes/usa_singapore/unimodal.npz"
 DATALOADER:
   NUM_WORKERS: 4
 OPTIMIZER:
   TYPE: "Adam"
   BASE_LR: 0.00001
+  CLASSIFIER_LR: 0.
 SCHEDULER:
   TYPE: "MultiStepLR"
   MultiStepLR:

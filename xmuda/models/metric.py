@@ -58,7 +58,9 @@ class SegIoU(object):
     @property
     def iou(self):
         h = self.mat.float()
-        iou = torch.diag(h) / (h.sum(1) + h.sum(0) - torch.diag(h))
+        union = h.sum(1) + h.sum(0) - torch.diag(h)
+        union[union == 0] = 1
+        iou = torch.diag(h) / union 
         return iou
 
     @property

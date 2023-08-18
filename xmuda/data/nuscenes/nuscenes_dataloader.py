@@ -5,7 +5,7 @@ import numpy as np
 from torch.utils.data import Dataset
 from torchvision import transforms as T
 
-from xmuda.data.utils.refine_pseudo_labels import refine_pseudo_labels, agreement_filter_pl, agreement_filter_pl_2, agreement_filter_soft_centroids, agreement_filter_hard_centroids, agreement_filter_annoy, agreement_filter_statistical_test, entropy_combination
+from xmuda.data.utils.refine_pseudo_labels import refine_pseudo_labels, agreement_filter_pl, agreement_filter_pl_2, agreement_filter_soft_centroids, agreement_filter_hard_centroids, agreement_filter_statistical_test, entropy_combination, entropy_combination_statistical_test
 from xmuda.data.utils.augmentation_3d import augment_and_scale_3d
 
 
@@ -56,56 +56,26 @@ class NuScenesBase(Dataset):
 
         self.pselab_data = None
         if pselab_paths:
-            assert isinstance(pselab_paths, tuple)
+            assert isinstance(pselab_paths, str)
             print('Load pseudo label data ', pselab_paths)
-            self.pselab_data = []
-            for curr_split in pselab_paths:
-                self.pselab_data.extend(np.load(curr_split, allow_pickle=True))
+            pselab = np.load(pselab_paths)
 
-            # check consistency of data and pseudo labels
-            assert len(self.pselab_data) == len(self.data)
-            for i in range(len(self.pselab_data)):
-                assert len(self.pselab_data[i]['pseudo_label_2d']) == len(self.data[i]['seg_labels'])
-
-
-            if 'probs_3d' in self.pselab_data[0].keys():
-                # refine 2d & 3d together
-                data = {key: np.concatenate([item[key] for item in self.pselab_data], axis=0) for key in self.pselab_data[0]}
-                data['pseudo_label_2d'] = data['pseudo_label_2d'].astype(np.int)
-                data['pseudo_label_3d'] = data['pseudo_label_3d'].astype(np.int)
-                
-#                pseudo_label_2d = refine_pseudo_label(data['probs_2d'], data['pseudo_label_2d'])
-#                pseudo_label_3d = refine_pseudo_label(data['probs_3d'], data['pseudo_label_3d'])
-
-#                pseudo_label_2d, pseudo_label_3d = agreement_filter_pl(**data)
-
-#                data['pselab_path'] = osp.dirname(pselab_paths[0])
-#                pseudo_label_2d = agreement_filter_statistical_test(**data)
-#                pseudo_label_3d = pseudo_label_2d
-
-                pseudo_label_2d = entropy_combination(data['probs_2d'], data['probs_3d'], 1) 
+            if 'refined_pseudo_label' in  pselab.files:
+                pseudo_label_2d = pselab['refined_pseudo_label']
                 pseudo_label_3d = pseudo_label_2d
             else:
-                # refine 2d pseudo labels
-                probs2d = np.concatenate([data['probs_2d'] for data in self.pselab_data])
-                pseudo_label_2d = np.concatenate([data['pseudo_label_2d'] for data in self.pselab_data]).astype(np.int)
-                pseudo_label_2d = refine_pseudo_labels(probs2d, pseudo_label_2d)
-                pseudo_label_3d = None
+                pseudo_label_2d = pselab['refined_pseudo_label_2d']
+                pseudo_label_3d = pselab['refined_pseudo_label_3d']
 
             # undo concat
             left_idx = 0
-            for data_idx in range(len(self.pselab_data)):
-                right_idx = left_idx + len(self.pselab_data[data_idx]['probs_2d'])
+            self.pselab_data = [None]*len(self.data)
+            for data_idx in range(len(self.data)):
+                right_idx = left_idx + len(self.data[data_idx]['points'])
+                self.pselab_data[data_idx] = {}
                 self.pselab_data[data_idx]['pseudo_label_2d'] = pseudo_label_2d[left_idx:right_idx]
-                if pseudo_label_3d is not None:
-                    self.pselab_data[data_idx]['pseudo_label_3d'] = pseudo_label_3d[left_idx:right_idx]
-                else:
-                    self.pselab_data[data_idx]['pseudo_label_3d'] = None
+                self.pselab_data[data_idx]['pseudo_label_3d'] = pseudo_label_3d[left_idx:right_idx]
                 left_idx = right_idx
-
-                for key in list(self.pselab_data[data_idx].keys()):
-                    if key not in ['pseudo_label_2d', 'pseudo_label_3d']:
-                        del self.pselab_data[data_idx][key]
 
         if merge_classes:
             self.label_mapping = -100 * np.ones(len(self.class_names), dtype=int)

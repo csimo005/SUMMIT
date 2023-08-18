@@ -19,7 +19,7 @@ DATASET_TARGET:
   NuScenesSCN:
     preprocess_dir: "/data/AmitRoyChowdhury/xmuda/nuscenes/preprocess"
     nuscenes_dir: "/data/AmitRoyChowdhury/nuscenes"  # only front cam images are needed
-    pselab_paths: ("/home/eegrad/csimons/Projects/xmuda/eval_result/nuscenes/day_night/baseline/pselab_data/train_night.npy",)
+    pselab_paths: "/home/eegrad/csimons/Projects/xmuda/refined_pselab/nuscenes/day_night/unimodal.npz"
 DATALOADER:
   NUM_WORKERS: 4
 OPTIMIZER:
@@ -38,7 +38,9 @@ TRAIN:
 #  CLASS_WEIGHTS: [2.68678412, 4.36182969, 5.47896839, 3.89026883, 1.] # Calculated on source
   CLASS_WEIGHTS: [3.03536195, 4.31818534, 5.33373101, 4.35830821, 1.] # Estimated with pseudo labels
   XMUDA:
-    lambda_xm_trg: 0.1 
+    lambda_ent: 0.
+    lambda_div: 0.
+    lambda_xm_trg: 0.1
     lambda_pl: 1.0
     ckpt_2d: '/home/eegrad/csimons/Projects/xmuda/output/76015/nuscenes/day_night/baseline/model_2d_100000.pth'
     ckpt_3d: '/home/eegrad/csimons/Projects/xmuda/output/76015/nuscenes/day_night/baseline/model_3d_100000.pth'
