@@ -3,6 +3,22 @@
 Official code for the paper.
 
 ## Paper
+![](./teaser.png)
+
+[SUMMIt: Source-Free Adaptation fo Uni-Modal Models to Multi-Modal Targets](https://arxiv.org/pdf/2308.11880v1.pdf)  
+ Cody Simons, Dripta Raychaudhuri, Sk Miraj Ahmed, Suya You, Konstantinos Karydis, Amit K. Roy-Chowdhury
+ University of California, Riverside & Army Research Lab
+ ICCV 2023
+
+If you find this code useful for your research, please cite our [paper](https://arxiv.org/pdf/2308.11880v1.pdf):
+
+```
+@inproceedings{simons2023summit,
+    title={SUMMIT: Source-Free Adaptationof Uni-Modal Models to Multi-Modal Targets},
+    author={Simons, Cody and Raychaudhuri, Dripta and Ahmed, Sk Miraj and Karydis, Konstantinos and You, Suya and Roy-Chowdhury, Amit},
+    booktitle={ICCV},
+    year={2023}
+}
 
 ## Preparation
 ### Prerequisites
@@ -154,22 +170,8 @@ $ python xmuda/test.py --cfg=configs/nuscenes/usa_singapore/xmuda.yaml @/model_2
 ```
 You can also provide an absolute path without `@`. 
 
-## Model Zoo
-
-You can download the models with the scores below from
-[this Google drive folder](https://drive.google.com/drive/folders/16MTKz4LOIwqQc3Vo6LAGrpiIC72hvggc?usp=sharing).
-
-| Method | USA/Singapore 2D | USA/Singapore 3D | Day/Night 2D | Day/Night 3D | A2D2/Sem.KITTI 2D | A2D2/Sem.KITTI 3D |
-| --- | --- | --- | --- | --- | --- |  --- | 
-| Baseline (source only)  | 53.4 | 46.5 | 42.2 | 41.2 | 34.2<sup>*</sup> | 35.9<sup>*</sup>
-| xMUDA  | 59.3 | 52.0 | 46.2 | 44.2 | 38.3<sup>*</sup> | 46.0<sup>*</sup>
-| xMUDA<sub>PL</sub> |61.1 | 54.1 | 47.1 | 46.7 | 41.2<sup>*</sup> | 49.8<sup>*</sup>
-
-<sup>*</sup> Slight differences from the paper on A2D2/Sem.KITTI: Now we use class weights computed on source.
-In the paper, we falsely computed class weights on the target domain.
-
 ## Acknowledgements
-Note that this code borrows from the [MVPNet](https://github.com/maxjaritz/mvpnet) repo.
+Note that this code builds on the [xMUAD](https://github.com/valeoai/xmuda) repo.
 
 ## License
-xMUDA is released under the [Apache 2.0 license](./LICENSE).
+SUMMIT is released under the [Apache 2.0 license](./LICENSE).
